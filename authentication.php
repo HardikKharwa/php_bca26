@@ -1,7 +1,7 @@
 <?php
 require_once('database.php');
 session_start();
-print_r($_POST);
+//print_r($_POST);
 if (isset($_POST['btnsubmit'])) {
 
     /*  LOGIN  */
