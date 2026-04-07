@@ -8,24 +8,24 @@ if (isset($_POST['action'])) {
             $userId = base64_decode($_POST['user_id']);
 
             if(!(empty($userId))){
-                $checkUserQuery = "select * from users where id = $id";
+                $checkUserQuery = "select * from users where id = $userId";
                 $resCheckUser = mysqli_query($conn,$checkUserQuery);
                 $cntCheckUser = mysqli_num_rows($resCheckUser);
                 if($cntCheckUser > 0){
-                    $deleteUserQuery = "delete from users where id = $id";
+                    $deleteUserQuery = "delete from users where id = $userId";
                     if(mysqli_query($conn,$deleteUserQuery)){
-                        return "Success";
+                        echo "Success";
                     }
                     else{
-                        return "Fail";
+                        echo "Fail";
                     }
                 }
                 else{
-                    return "NoUserFound";
+                    echo "NoUserFound";
                 }
             }
             else{
-                return "NoData";
+                echo "NoData";
             }
         }
     }

@@ -1,7 +1,7 @@
 <?php
 require_once('database.php');
+include("includes/functions.inc.php");
 session_start();
-//print_r($_POST);
 if (isset($_POST['btnsubmit'])) {
 
     /*  LOGIN  */
@@ -23,15 +23,17 @@ if (isset($_POST['btnsubmit'])) {
             echo "Password must be at least 8 characters";
         }
         else if (strlen($password) > 8) {
-            $query = "select id,username,password from users where username = '$username'";
+            $userData = getUserData($conn,"",$username,"");
             //mysqli_query -> It executes the query from the db and stores the data in obj format
-            $res = mysqli_query($conn,$query);
+            //$res = mysqli_query($conn,$query);
             // mysqli_num_rows -> IT fetches the count of resultset that is fetched from the query
-            $cnt = mysqli_num_rows($res);
-            if($cnt > 0){
+            //$cnt = mysqli_num_rows($res);
+            //if($cnt > 0){
+            if(count($userData) > 0) {
                 //mysqli_fetch_assoc -> Converts data from object format to Array format
-                $row = mysqli_fetch_assoc($res);
-                if($row['password'] == md5($password)){
+                //$row = mysqli_fetch_assoc($res);
+                $row = $userData[0]['password'];
+                if($row == md5($password)){
                         $_SESSION['username'] = $username;
                         $_SESSION['isloggedIn'] = "1";
                         header("Location: dashboard.php");
@@ -81,13 +83,19 @@ if (isset($_POST['btnsubmit'])) {
         }
         else {
             //echo "Registration successful";
-            $enc_password = md5($password);
-            $query = "insert into users(username,password) VALUES('$username','$enc_password')";
-            if(mysqli_query($conn,$query)){
-                echo "Registration successful";
+            $userData = getUserData($conn,"",$username,"");
+            if(count($userData) == 0) {
+                $enc_password = md5($password);
+                $query = "insert into users(username,password) VALUES('$username','$enc_password')";
+                if(mysqli_query($conn,$query)){
+                    echo "Registration successful";
+                }
+                else{
+                    echo "Failed to register user";
+                }
             }
             else{
-                echo "Failed to register user";
+                echo "User Already Registered, Kindly Login";
             }
         }
     }
@@ -99,10 +107,8 @@ if (isset($_POST['btnsubmit'])) {
         $email = $_POST['email'];
 
         if((strlen($uid) > 0 && $uid != "") && (strlen($username) > 0 && $username != "")){
-            $CheckUserQuery = "select id,username from users where id = $uid";
-            $checkUserRes = mysqli_query($conn,$CheckUserQuery);
-            $checkUserCnt = mysqli_num_rows($checkUserRes);
-            if($checkUserCnt > 0){
+            $checkUserData = getUserData($conn,$uid,"","");
+            if(count($checkUserData) > 0){
                 $updateUserQuery = "update users set username= '$username',contact='$phone',email='$email' where id = $uid";
                 if(mysqli_query($conn,$updateUserQuery)){
                     ?>

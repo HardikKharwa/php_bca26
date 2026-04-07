@@ -12,7 +12,7 @@ if(isset($_GET['id'])){
     }
 }
 else{
-    header("Location:dashboard.php");
+    header("Location:logout.php");
 }
 ?>
 <html>

@@ -1,5 +1,9 @@
 <?php
 include("database.php");
+session_start();
+if(!(isset($_SESSION['isloggedIn']))){
+    header("Location:logout.php");
+}
 
 $query = "select * from users";
 $res = mysqli_query($conn,$query);
@@ -8,11 +12,13 @@ $cnt = mysqli_num_rows($res);
 <html>
     <head>
         <title>Dashboard Page</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     </head>
     <body>
+        <a href="logout.php" class="btn btn-warning">Logout</a>
         <h3>Users List</h3>
-        <table border="1">
+        <table border="1" class="table table-striped" style="width:50%">
             <tr>
                 <th>#</th><th>Username</th><th>Contact</th><th>Email</th><th>Password</th><th>Actions</th>
             </tr>
@@ -49,7 +55,7 @@ $cnt = mysqli_num_rows($res);
                         type: 'POST',
                         dataType: 'json',
                         url: 'action.php',
-                        data: { action: <?php  echo base64_encode('btnaAjax') ?>, action1:<?php echo base64_encode('deleteUser') ?> ,user_id: id },
+                        data: { action: '<?php  echo base64_encode("btnaAjax") ?>', action1:'<?php echo base64_encode("deleteUser") ?> ',user_id: id },
                         success:function(response){
                             if(response == "Success"){
                                 window.location.href='dashboard.php';
