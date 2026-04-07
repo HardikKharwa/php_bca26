@@ -18,7 +18,7 @@ $cnt = mysqli_num_rows($res);
     <body>
         <a href="logout.php" class="btn btn-warning">Logout</a>
         <h3>Users List</h3>
-        <table border="1" class="table table-striped" style="width:50%">
+        <table border="1" class="table table-striped" style="width:100%">
             <tr>
                 <th>#</th><th>Username</th><th>Contact</th><th>Email</th><th>Password</th><th>Actions</th>
             </tr>
