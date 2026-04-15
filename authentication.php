@@ -32,6 +32,7 @@ if (isset($_POST['btnsubmit'])) {
                 //$row = mysqli_fetch_assoc($res);
                 $row = $userData[0]['password'];
                 if ($row == md5($password)) {
+                    $_SESSION['user_id'] = base64_encode(base64_encode($userData[0]['id']));
                     $_SESSION['username'] = $username;
                     $_SESSION['isloggedIn'] = "1";
                     header("Location: dashboard.php");
@@ -123,11 +124,10 @@ if (isset($_POST['btnsubmit'])) {
         $checkUser = getUserData($conn, $user_id, "", "");
         $file_path = "image_user/";         //Folder where te image will be sabed
         if (count($checkUser) > 0) {
-
             if (is_uploaded_file($_FILES['user_image']['tmp_name'])) {
                 $filename = $_FILES['user_image']['name'];
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                $allowed_extension = ['.jpg, .jpeg, .png'];
+                $allowed_extension = ['.jpg', '.jpeg', '.png'];
                 if (in_array($extension, $allowed_extension)) {
                     if ($_FILES['user_image']['size'] < 5000000) {
                         // echo "File size is valid";
@@ -136,9 +136,14 @@ if (isset($_POST['btnsubmit'])) {
                             //echo "File saved to directory";
                             $updateImageQuery = "update users set image_path = '$filename' where id = $user_id";
                             if (mysqli_query($conn, $updateImageQuery)) {
-                                echo "user Image Saved Successfully";
+                                // echo "user Image Saved Successfully";
                                 $_SESSION['error'] = "1";
                                 $_SESSION['message'] = "user Image Saved Successfully";
+                                header("Location:profile.php");
+                            } else {
+                                // echo "Failed to save image path in database";
+                                $_SESSION['error'] = "0";
+                                $_SESSION['message'] = "Failed to save image path in database";
                                 header("Location:profile.php");
                             }
                         } else {
@@ -148,18 +153,28 @@ if (isset($_POST['btnsubmit'])) {
                             header("Location:profile.php");
                         }
                     } else {
-                        echo "File size is greater than 5MB";
+                        // echo "File size is greater than 5MB";
                         $_SESSION['error'] = "0";
                         $_SESSION['message'] = "File size is greater than 5MB";
                         header("Location:profile.php");
                     }
                 } else {
-                    echo "Please select file of valid extension";
-                    $_SESSION['error'];
+                    // echo "Please select file of valid extension";
+                    $_SESSION['error'] = "0";
+                    $_SESSION['message'] = "Please select file of valid extension";
+                    header("Location:profile.php");
                 }
+            } else {
+                echo "Please select file";
+                $_SESSION['error'] = "0";
+                $_SESSION['message'] = "Please select file";
+                header("Location:profile.php");
             }
         } else {
-            echo "Please select file";
+            echo "User not found";
+            $_SESSION['error'] = "0";
+            $_SESSION['message'] = "Some error occured, Try Again!";
+            header("Location:login.php");
         }
     }
 }
